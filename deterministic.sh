@@ -22,38 +22,90 @@ shenParc=shen_2mm_268_parcellation.nii.gz
 #get T1w_brain, wmparc, shen, MNI
 
 echo "making scheme file"
-fsl2scheme -bvecfile ${bvecFile} -bvalfile ${bvalFile} > bVectorScheme.scheme
+fsl2scheme \
+-bvecfile ${bvecFile} \
+-bvalfile ${bvalFile} > bVectorScheme.scheme
 echo
+
 echo "registering b0-T1"
-flirt -in ${b0Brain} -ref ${T1wBrain} -omat tfm.mat
-convert_xfm -omat tfm_invert.mat -inverse tfm.mat
+flirt \
+-in ${b0Brain} \
+-ref ${T1wBrain} \
+-omat tfm.mat
+
+convert_xfm \
+-omat tfm_invert.mat \
+-inverse tfm.mat
 echo
+
 echo "registering white matter mask"
-flirt -in ${wmParc} -ref ${b0Brain} -applyxfm -init tfm_invert.mat -o wmparc_invert.nii.gz
-fslmaths wmparc_invert.nii.gz -thr 2500 -bin wmparc_invert_bin.nii.gz
+flirt \
+-in ${wmParc} \
+-ref ${b0Brain} \
+-applyxfm \
+-init tfm_invert.mat \
+-o wmparc_invert.nii.gz
 echo
+fslmaths \
+wmparc_invert.nii.gz \
+-thr 2500 \
+-bin wmparc_invert_bin.nii.gz
+echo
+
 echo "registering MNI"
-flirt -in ${mniBrain} -ref ${b0Brain} -interp nearestneighbour -omat mni.mat
+flirt \
+-in ${mniBrain} \
+-ref ${b0Brain} \
+-interp nearestneighbour \
+-omat mni.mat
 echo
+
 echo "registering atlas"
-flirt -in ${shenParc} -ref ${b0Brain} -interp nearestneighbour -applyxfm -init mni.mat -o atlas.nii.gz
+flirt \
+-in ${shenParc} \
+-ref ${b0Brain} \
+-interp nearestneighbour \
+-applyxfm \
+-init mni.mat \
+-o atlas.nii.gz
 echo
 
 #***************************************************************************
 #DETERMINISTIC TRACTOGRAPHY
 echo "fitting tensors"
-wdtfit ${multiVol} bVectorScheme.scheme -brainmask ${b0Mask} -outputfile wdt.nii.gz
+wdtfit ${multiVol} bVectorScheme.scheme \
+-brainmask ${b0Mask} \
+-outputfile wdt.nii.gz
 echo
 echo "streamlining"
-track -inputfile wdt.nii.gz -inputmodel dt -seedfile wmparc_invert_bin.nii.gz -curvethresh 90 -curveinterval 2.5 -anisthresh 0.2 -tracker rk4 -interpolator linear -stepsize 0.5 -iterations 1000 \
--brainmask ${b0Mask} | procstreamlines -endpointfile atlas.nii.gz -outputfile detTracts.Bfloat
+track \
+-inputfile wdt.nii.gz \
+-inputmodel dt \
+-seedfile wmparc_invert_bin.nii.gz \
+-curvethresh 90 \
+-curveinterval 2.5 \
+-anisthresh 0.2 \
+-tracker rk4 \
+-interpolator linear \
+-stepsize 0.5 \
+-iterations 1000 \
+-brainmask ${b0Mask} | procstreamlines \
+-endpointfile atlas.nii.gz \
+-outputfile detTracts.Bfloat
 echo
 #***************************************************************************
 #CONNECTIVITY MATRIX
-fa -inputfile wdt.nii.gz -outputfile fa.nii.gz
+fa \
+-inputfile wdt.nii.gz \
+-outputfile fa.nii.gz
 
 echo "calculating connectivity matrix"
-conmat -inputfile detTracts.Bfloat -targetfile atlas.nii.gz -scalarfile fa.nii.gz -tractstat min -outputroot conmat_
+conmat \
+-inputfile detTracts.Bfloat \
+-targetfile atlas.nii.gz \
+-scalarfile fa.nii.gz \
+-tractstat min \
+-outputroot conmat_det_
 echo
 #***************************************************************************
 #visuals
@@ -61,6 +113,6 @@ echo
 # paraview detTracts.vtk
 
 # matlab
-# conmat_path = 'conmat_ts.csv';
+# conmat_path = 'conmat_det_ts.csv';
 # myconmat = csvread(conmat_path, 1, 0);
 # figure, imagesc(myconmat)
