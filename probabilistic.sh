@@ -1,3 +1,12 @@
+#!/bin/bash
+
+##SETUP
+. $MODULESHOME/init/bash
+module load camino
+module load FSL
+module load matlab
+module load paraview
+
 mkdir pico
 
 ##INPUTS
