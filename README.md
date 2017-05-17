@@ -1,6 +1,17 @@
 # conmat
 Connectivity Matrices
 
++ Camino
++ FSL
++ Matlab
++ Paraview
+
+## Pre-Processing
+- fsl2scheme
+- flirt
+- convert_xfm
+- fslmaths
+
 ## Deterministic Tractography
 + RK4
 + track
@@ -12,9 +23,27 @@ Connectivity Matrices
 - interpolation algorithms 
 - linear vs tend vs nn
 
+Parameters determined from: Reproducibility of graph metrics of human brain structural networks
+
+wdtfit - wrapper to modelfit
+track
+fa
+
+
 ## Probabilistic Tractography
 + probability look-up table
 + PICo
-+ signal to noise ratio 
-+ estimatesnr
-+ track
+
+- modelfit
+- estimatesnr
+- dtlutgen
+- picopdfs
+- track 
+
+
+## Connectivity Matrix
+- conmat
+
+## Visualisation Tools
+- vtkstreamlines
+- pdview 
