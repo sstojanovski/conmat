@@ -45,7 +45,7 @@ echo "fitting tensors"
 wdtfit ${multiVol} A.scheme -brainmask ${b0Mask} -outputfile wdt.nii.gz
 echo
 echo "streamlining"
-track -inputfile wdt.nii.gz -inputmodel dt -seedfile wmparc_invert_bin.nii.gz -curvethresh 90 -curveinterval 2.5 -anisthresh 0.2 -tracker rk4 -interpolator linear -stepsize 0.5 \
+track -inputfile wdt.nii.gz -inputmodel dt -seedfile wmparc_invert_bin.nii.gz -curvethresh 90 -curveinterval 2.5 -anisthresh 0.2 -tracker rk4 -interpolator linear -stepsize 0.5 -iterations 1000 \
 -brainmask ${b0Mask} | procstreamlines -endpointfile atlas.nii.gz -outputfile detTracts.Bfloat
 echo
 #***************************************************************************
