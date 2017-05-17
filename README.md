@@ -3,6 +3,11 @@ Connectivity Matrices
 
 ## Deterministic Tractography
 + RK4
++ track
 
 ## Probabilistic Tractography
-+ PICo Tracts
++ probability look-up table
++ PICo
++ signal to noise ratio 
++ estimatesnr
++ track
