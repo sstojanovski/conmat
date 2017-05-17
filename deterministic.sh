@@ -5,7 +5,7 @@
 module load camino
 module load FSL
 module load matlab
-module load paraview
+module load Paraview
 
 ##INPUTS
 
@@ -17,7 +17,7 @@ b0Brain=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct_b0_bet.ni
 T1wBrain=T1w_brain.nii.gz
 wmParc=wmparc.nii.gz
 mniBrain=MNI152_T1_2mm_brain.nii.gz
-shenAtlas=shen_2mm_268_parcellation.nii.gz
+shenParc=shen_2mm_268_parcellation.nii.gz
 
 #get T1w_brain, wmparc, shen, MNI
 
@@ -36,13 +36,13 @@ echo "registering MNI"
 flirt -in ${mniBrain} -ref ${b0Brain} -interp nearestneighbour -omat mni.mat
 echo
 echo "registering atlas"
-flirt -in ${shenAtlas} -ref ${b0Brain} -interp nearestneighbour -applyxfm -init mni.mat -o atlas.nii.gz
+flirt -in ${shenParc} -ref ${b0Brain} -interp nearestneighbour -applyxfm -init mni.mat -o atlas.nii.gz
 echo
 
 #***************************************************************************
 #DETERMINISTIC TRACTOGRAPHY
 echo "fitting tensors"
-wdtfit ${multiVol} A.scheme -brainmask ${b0Mask} -outputfile wdt.nii.gz
+wdtfit ${multiVol} bVectorScheme.scheme -brainmask ${b0Mask} -outputfile wdt.nii.gz
 echo
 echo "streamlining"
 track -inputfile wdt.nii.gz -inputmodel dt -seedfile wmparc_invert_bin.nii.gz -curvethresh 90 -curveinterval 2.5 -anisthresh 0.2 -tracker rk4 -interpolator linear -stepsize 0.5 -iterations 1000 \
@@ -57,10 +57,10 @@ conmat -inputfile detTracts.Bfloat -targetfile atlas.nii.gz -scalarfile fa.nii.g
 echo
 #***************************************************************************
 #visuals
-vtkstreamlines -colourorient < detTracts.Bfloat > detTracts.vtk
-paraview detTracts.vtk
+# vtkstreamlines -colourorient < detTracts.Bfloat > detTracts.vtk
+# paraview detTracts.vtk
 
-matlab
+# matlab
 # conmat_path = 'conmat_ts.csv';
 # myconmat = csvread(conmat_path, 1, 0);
 # figure, imagesc(myconmat)
