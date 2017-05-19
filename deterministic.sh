@@ -8,12 +8,12 @@ module load matlab
 module load Paraview
 
 ##INPUTS
-
-bvecFile=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct.bvec
-bvalFile=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct.bval
-multiVol=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct.nii.gz
-b0Mask=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct_b0_bet_mask.nii.gz
-b0Brain=SPN01_CMH_P001_01_01_DTI60-1000_17_Ax-DTI-60plus5_eddy_correct_b0_bet.nii.gz
+ptID=SPN01_CMH_P001_02_01_DTI60-1000_08_Ax-DTI-60plus5-20iso_eddy_correct
+bvecFile=${ptID}.bvec
+bvalFile=${ptID}.bval
+multiVol=${ptID}.nii.gz
+b0Mask=${ptID}_b0_bet_mask.nii.gz
+b0Brain=${ptID}_b0_bet.nii.gz
 T1wBrain=T1w_brain.nii.gz
 wmParc=wmparc.nii.gz
 mniBrain=MNI152_T1_2mm_brain.nii.gz
@@ -88,7 +88,7 @@ track \
 -tracker rk4 \
 -interpolator linear \
 -stepsize 0.5 \
--iterations 1000 \
+-iterations 100 \
 -brainmask ${b0Mask} | procstreamlines \
 -endpointfile atlas.nii.gz \
 -outputfile detTracts.Bfloat
