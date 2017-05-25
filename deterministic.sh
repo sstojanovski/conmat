@@ -9,6 +9,7 @@ module load Paraview
 
 ##INPUTS
 ptID=SPN01_CMH_P001_02_01_DTI60-1000_08_Ax-DTI-60plus5-20iso_eddy_correct
+
 bvecFile=${ptID}.bvec
 bvalFile=${ptID}.bval
 multiVol=${ptID}.nii.gz
@@ -95,6 +96,10 @@ track \
 echo
 #***************************************************************************
 #CONNECTIVITY MATRIX
+md \
+-inputfile wdt.nii.gz \
+-outputfile md.nii.gz
+
 fa \
 -inputfile wdt.nii.gz \
 -outputfile fa.nii.gz
@@ -103,10 +108,13 @@ echo "calculating connectivity matrix"
 conmat \
 -inputfile detTracts.Bfloat \
 -targetfile atlas.nii.gz \
--scalarfile fa.nii.gz \
--tractstat min \
+-tractstat length \
 -outputroot conmat_det_
 echo
+
+# get matrices of fa and md
+
+
 #***************************************************************************
 #visuals
 # vtkstreamlines -colourorient < detTracts.Bfloat > detTracts.vtk
