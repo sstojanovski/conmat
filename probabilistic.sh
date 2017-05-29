@@ -121,6 +121,22 @@ track \
 -seedfile wmparc_invert_bin.nii.gz \
 -iterations 100 < pdfs.Bdouble > picoTracts.Bfloat
 echo
+
+# ## BedpostX
+# track \
+# -bedpostxdir ../SPN01_CMH_P001_02.bedpostX/ \
+# -inputmodel bedpostx \
+# -seedfile wmparc_invert_bin.nii.gz \
+# -curvethresh 90 \
+# -curveinterval 2.5 \
+# -anisthresh 0.2 \
+# -tracker rk4 \
+# -interpolator linear \
+# -iterations 100 \
+# -brainmask nodif_brain_mask.nii.gz | procstreamlines \
+# -endpointfile atlas.nii.gz \
+# -outputfile bedProbTracts.Bfloat
+
 #***************************************************************************
 #CONNECTIVITY MATRIX
 md \
