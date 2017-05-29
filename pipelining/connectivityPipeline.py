@@ -1,26 +1,9 @@
-# module load FSL/5.0.10
-# module load camino/1886d5
-# module load python
+#! /usr/bin/env python
 
 import os
 import glob
 import shutil
-
-# enter project directory
-projectName = raw_input('Project Name: ')
-projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
-os.chdir(projectPath)
-
-projectSubjects = glob.glob('*')
-projectSubjects.sort()
-
-# for all the projects which have nii pipeline folders
-for subjectID in projectSubjects:
-	# check for bedpostx pipeline and conmat do not exist already?
-	getFiles(projectName, subjectID)
-	runBedpostX(projectName, subjectID)
-	register(subjectID)
-	runConmat(projectName, subjectID)
+import sys
 
 #--------------------------------------------------------------------------------
 
@@ -136,8 +119,43 @@ def runConmat(projName, subjID):
 		-inputfile bedDetTracts.Bfloat \
 		-targetfile atlas.nii.gz \
 		-tractstat length \
-		-outputroot ' + subjID + '_bed_det_')
+		-outputroot ' + subjID + '_bedpostX_det_')
 
 	os.makedirs(conmatPipeDir)
-	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjID + '_bed_det_connectivity.csv')
-	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjID + '_bed_det_length.csv')
+	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjID + '_bedpostX_det_connectivity.csv')
+	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjID + '_bedpostX_det_length.csv')
+
+def removeTempFiles(subjID):
+	tempSubjDir = '/tmp/' + subjID
+	shutil.rmtree(tempSubjDir)
+	shutil.rmtree(tempSubjDir + '.bedpostX')
+
+#--------------------------------------------------------------------------------
+
+# enter project directory
+projectName = sys.argv[1]
+projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
+
+os.chdir(projectPath)
+
+projectSubjects = glob.glob('*')
+projectSubjects.sort()
+
+# for all the projects which have nii pipeline folders
+for subjectID in projectSubjects:
+	if "PHA" not in subjectID:
+		print(subjectID)
+		# check for bedpostx pipeline and conmat do not exist already?
+		bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
+		conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
+		dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
+		hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
+
+		if os.path.exists(dtiPipeDir):
+			getFiles(projectName, subjectID)
+			if not os.path.exists(bedpostXPipeDir):
+				runBedpostX(projectName, subjectID)
+				if not os.path.exists(conmatPipeDir):
+					register(subjectID)
+					runConmat(projectName, subjectID)
+					removeTempFiles(subjectID)

@@ -73,6 +73,7 @@ echo
 
 #***************************************************************************
 #DETERMINISTIC TRACTOGRAPHY
+## Camino
 echo "fitting tensors"
 wdtfit ${multiVol} bVectorScheme.scheme \
 -brainmask ${b0Mask} \
@@ -92,8 +93,24 @@ track \
 -iterations 100 \
 -brainmask ${b0Mask} | procstreamlines \
 -endpointfile atlas.nii.gz \
--outputfile detTracts.Bfloat
+-outputfile camDetTracts.Bfloat
 echo
+
+# ## BedpostX
+# track \
+# -bedpostxdir ../SPN01_CMH_P001_02.bedpostX/ \
+# -inputmodel bedpostx_dyad \
+# -seedfile wmparc_invert_bin.nii.gz \
+# -curvethresh 90 \
+# -curveinterval 2.5 \
+# -anisthresh 0.2 \
+# -tracker rk4 \
+# -interpolator linear \
+# -iterations 100 \
+# -brainmask nodif_brain_mask.nii.gz | procstreamlines \
+# -endpointfile atlas.nii.gz \
+# -outputfile bedDetTracts.Bfloat
+
 #***************************************************************************
 #CONNECTIVITY MATRIX
 md \
@@ -106,7 +123,7 @@ fa \
 
 echo "calculating connectivity matrix"
 conmat \
--inputfile detTracts.Bfloat \
+-inputfile camDetTracts.Bfloat \
 -targetfile atlas.nii.gz \
 -tractstat length \
 -outputroot conmat_det_
