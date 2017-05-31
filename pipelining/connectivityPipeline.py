@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 import os
 import glob
@@ -7,23 +7,61 @@ import sys
 
 #--------------------------------------------------------------------------------
 
+# # enter project directory
+# projectName = sys.argv[1]
+# projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
+
+# os.chdir(projectPath)
+
+# projectSubjects = glob.glob('*')
+# projectSubjects.sort()
+
+# # for all the projects which have nii pipeline folders
+# for subjectID in projectSubjects:
+# 	if "PHA" not in subjectID:
+# 		print(subjectID)
+# 		# check for bedpostx pipeline and conmat do not exist already?
+
+projectName = sys.argv[1]
+subjectID = sys.argv[2]
+
+bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
+conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
+dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
+hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
+eyeFile = bedpostXPipeDir + subjectID + '.bedpostX/xfms/eye.mat'
+
+dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
+hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
+mniAtlasDir = '/projects/lliu/ImportantFiles/'
+tempSubjDir = '/scratch/lliu/tmp/' + subjectID + '/'
+tempSubjName = '/scratch/lliu/tmp/' + subjectID
+
+bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/' + subjectID + '.bedpostX'
+conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
+
+def main():
+	if os.path.exists(dtiPipeDir):
+		getFiles(projectName, subjectID)
+		if not os.path.exists(bedpostXPipeDir):
+			runBedpostX(projectName, subjectID)
+		else:
+			if not os.path.exists(conmatPipeDir):
+				register(subjectID)
+				runConmat(projectName, subjectID)
+				removeTempFiles(subjectID)	
+
+#--------------------------------------------------------------------------------
+
 def getFiles(projName, subjID):
-	dtiPipeDir = '/archive/data-2.0/' + projName + '/pipelines/dtifit/' + subjID + '/'
-	hcpPipeDir = '/archive/data-2.0/' + projName + '/pipelines/hcp/' + subjID + '/T1w/'
-	mniAtlasDir = '/projects/lliu/ImportantFiles/'
-
-	# make a temp folder in tmp 
-	tempSubjDir = '/tmp/' + subjID + '/'
-
-	# copy over dti data, hcp data, and atlases
-	shutil.copytree(dtiPipeDir, tempSubjDir) # directory cannot already exist
-	shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
-	shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
-	shutil.copy(mniAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
-	shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
+	if not os.path.exists(tempSubjDir):
+		shutil.copytree(dtiPipeDir, tempSubjDir)
+		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
+		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
+		shutil.copy(mniAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
+		shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
 
 def runBedpostX(projName, subjID):
-	tempSubjDir = '/tmp/' + subjID + '/'
 	os.chdir(tempSubjDir)
 
 	shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
@@ -35,12 +73,13 @@ def runBedpostX(projName, subjID):
 	os.system('bedpostx ./')
 
 	# copy the output *.bedpostX to targetPath
-	# bedpostXPipeDir = '/archive/data-2.0/' + projName + '/pipelines/bedpostX/' + subjID + '/' + subjID + '.bedpostX'
-	bedpostXPipeDir = '/scratch/lliu/' + projName + '/pipelines/bedpostX/' + subjID + '/' + subjID + '.bedpostX'
-	shutil.copytree('/tmp/' + subjID + '.bedpostX', bedpostXPipeDir)
+	flag = 0
+	while flag != 1:
+		if os.path.exists(eyeFile):
+			shutil.copytree(tempSubjName + '.bedpostX', bedpostXPipeDir)
+			flag == 1
 
 def register(subjID):
-	tempSubjDir = '/tmp/' + subjID + '/'
 	os.chdir(tempSubjDir)
 
 	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0] 
@@ -52,9 +91,9 @@ def register(subjID):
 
 	os.system('echo "registering b0-T1"')
 	os.system('flirt \
-		 -in ' + b0Brain + ' \
-		 -ref ' + T1wBrain + ' \
-		 -omat tfm.mat')
+		-in ' + b0Brain + ' \
+		-ref ' + T1wBrain + ' \
+		-omat tfm.mat')
 
 	os.system('convert_xfm \
 		-omat tfm_invert.mat \
@@ -90,13 +129,6 @@ def register(subjID):
 		-o atlas.nii.gz')
 
 def runConmat(projName, subjID):
-	tempSubjDir = '/tmp/' + subjID + '/'
-	tempSubjName = '/tmp/' + subjID
-	# bedpostXPipeDir = '/archive/data-2.0/' + projName + '/pipelines/bedpostX/' + subjID + '/' + subjID + '.bedpostX'
-	bedpostXPipeDir = '/scratch/lliu/' + projName + '/pipelines/bedpostX/' + subjID + '/' + subjID + '.bedpostX'
-	# conmatPipeDir = '/archive/data-2.0/' + projName + '/pipelines/conmat/' + subjID + '/' + subjID + '/'
-	conmatPipeDir = '/scratch/lliu/' + projName + '/pipelines/conmat/' + subjID + '/' 
-
 	os.chdir(tempSubjDir)
 
 	os.system('echo "streamlining"')
@@ -126,36 +158,10 @@ def runConmat(projName, subjID):
 	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjID + '_bedpostX_det_length.csv')
 
 def removeTempFiles(subjID):
-	tempSubjDir = '/tmp/' + subjID
 	shutil.rmtree(tempSubjDir)
 	shutil.rmtree(tempSubjDir + '.bedpostX')
 
 #--------------------------------------------------------------------------------
 
-# enter project directory
-projectName = sys.argv[1]
-projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
-
-os.chdir(projectPath)
-
-projectSubjects = glob.glob('*')
-projectSubjects.sort()
-
-# for all the projects which have nii pipeline folders
-for subjectID in projectSubjects:
-	if "PHA" not in subjectID:
-		print(subjectID)
-		# check for bedpostx pipeline and conmat do not exist already?
-		bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
-		conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
-		dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
-		hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
-
-		if os.path.exists(dtiPipeDir):
-			getFiles(projectName, subjectID)
-			if not os.path.exists(bedpostXPipeDir):
-				runBedpostX(projectName, subjectID)
-				if not os.path.exists(conmatPipeDir):
-					register(subjectID)
-					runConmat(projectName, subjectID)
-					removeTempFiles(subjectID)
+if __name__ == '__main__':
+	main()
