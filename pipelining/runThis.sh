@@ -6,4 +6,4 @@ module load python
 projectName=${projName}
 subjectID=${subjID}
 
-python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
+python /scratch/lliu/ConnectivityPipe/recover.py ${projectName} ${subjectID}

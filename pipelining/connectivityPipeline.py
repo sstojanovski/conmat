@@ -36,6 +36,7 @@ tempSubjName = '/scratch/lliu/tmp/' + subjectID
 eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
 
+
 def main():
 	flag = 0
 	while flag != 1:
@@ -43,37 +44,41 @@ def main():
 			if not os.path.exists(bedpostXPipeDir):
 				if os.path.exists(dtiPipeDir):
 					if not os.path.exists(tempSubjName + '.bedpostX'):
-						getFiles(projectName, subjectID)
-						runBedpostX(projectName, subjectID)
-					copyBedpostX(projectName, subjectID)
+						flag = 1 ###########
+						# getFiles()
+						# runBedpostX()
+					copyBedpostX()
 			else:
-				register(subjectID)
-				runConmat(projectName, subjectID)
-				removeTempFiles(subjectID)	
+				register()
+				runConmat()
+				getFaMat('mean')
+				getMdMat('mean')
+				# removeTempFiles()	
 				flag = 1
+		else:
+			return		
 
 #--------------------------------------------------------------------------------
 
-def getFiles(projName, subjID):
+def getFiles():
 	if not os.path.exists(tempSubjDir):
 		shutil.copytree(dtiPipeDir, tempSubjDir)
 		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
 		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
 		shutil.copy(mniAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
 		shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
-
-def runBedpostX(projName, subjID):
+	
 	os.chdir(tempSubjDir)
 
 	shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
 	shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
 	shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
-
+def runBedpostX():
 	# run bedpostX
 	os.system('bedpostx ./')
 
-def copyBedpostX(projName, subjID):
+def copyBedpostX():
 	# copy the output *.bedpostX to targetPath
 	flag = 0
 	while flag != 1:
@@ -81,11 +86,12 @@ def copyBedpostX(projName, subjID):
 			shutil.copytree(tempSubjName + '.bedpostX', bedpostXPipeDir + subjectID + '.bedpostX')
 			flag = 1
 
-def register(subjID):
+def register():
 	os.chdir(tempSubjDir)
 
 	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0] 
 	b0Brain = glob.glob('*_b0_bet.nii.gz')[0] 
+	multiVol = glob.glob('*_eddy_correct.nii.gz')[0]
 	T1wBrain = 'T1w_brain.nii.gz' 
 	wmParc = 'wmparc.nii.gz' 
 	mniBrain = 'MNI152_T1_2mm_brain.nii.gz' 
@@ -137,7 +143,12 @@ def register(subjID):
 		-init mni.mat \
 		-o atlas.nii.gz')
 
-def runConmat(projName, subjID):
+	os.system('echo "fitting tensors"')
+	os.system('wdtfit ' + multiVol + 'bVectorScheme.scheme \
+		-brainmask ' + b0Mask + ' \
+		-outputfile wdt.nii.gz')
+
+def runConmat():
 	os.chdir(tempSubjDir)
 
 	os.system('echo "streamlining"')
@@ -160,16 +171,45 @@ def runConmat(projName, subjID):
 		-inputfile bedDetTracts.Bfloat \
 		-targetfile atlas.nii.gz \
 		-tractstat length \
-		-outputroot ' + subjID + '_bedpostX_det_')
+		-outputroot ' + subjectID + '_bedpostX_det_')
 
 	os.makedirs(conmatPipeDir)
-	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjID + '.Bfloat')
-	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjID + '.scheme')
-	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjID + '_registered_shen.nii.gz')
-	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjID + '_bedpostX_det_connectivity.csv')
-	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjID + '_bedpostX_det_length.csv')
+	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
+	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
+	shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '.nii.gz')
+	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
+	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
+	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
 
-def removeTempFiles(subjID):
+def getFaMat(stat):
+	os.chdir(tempSubjDir)
+	os.system('fa -inputfile wdt.nii.gz -outputfile fa.nii.gz')
+
+	os.system('echo "calculating connectivity matrix"')
+	os.system('conmat \
+		-inputfile bedDetTracts.Bfloat \
+		-targetfile atlas.nii.gz \
+		-scalarfile fa.nii.gz \
+		-tractstat ' + stat + ' \
+		-outputroot ' + subjectID + '_fa_' + stat + '_')
+
+	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_fa_' + stat + '.csv')
+
+def getMdMat(stat):
+	os.chdir(tempSubjDir)
+	os.system('md -inputfile wdt.nii.gz -outputfile md.nii.gz')
+
+	os.system('echo "calculating connectivity matrix"')
+	os.system('conmat \
+		-inputfile bedDetTracts.Bfloat \
+		-targetfile atlas.nii.gz \
+		-scalarfile md.nii.gz \
+		-tractstat ' + stat + ' \
+		-outputroot ' + subjectID + '_md_' + stat + '_')
+
+	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_md_' + stat + '.csv')
+
+def removeTempFiles():
 	shutil.rmtree(tempSubjDir)
 	shutil.rmtree(tempSubjName + '.bedpostX')
 
