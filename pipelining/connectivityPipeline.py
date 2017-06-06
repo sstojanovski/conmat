@@ -36,55 +36,134 @@ tempSubjName = '/scratch/lliu/tmp/' + subjectID
 eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
 
-
 def main():
-	flag = 0
-	while flag != 1:
-		if not os.path.exists(conmatPipeDir):
-			if not os.path.exists(bedpostXPipeDir):
-				if os.path.exists(dtiPipeDir):
-					if not os.path.exists(tempSubjName + '.bedpostX'):
-						flag = 1 ###########
-						# getFiles()
-						# runBedpostX()
-					copyBedpostX()
-			else:
-				register()
-				runConmat()
-				getFaMat('mean')
-				getMdMat('mean')
-				# removeTempFiles()	
-				flag = 1
-		else:
-			return		
+	# flag = 0
+	# while flag != 1:
+	# 	if os.path.exists(dtiPipeDir):
+	# 		if not os.path.exists(tempSubjDir):
+	# 			getFiles()
+	# 			if os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
+	# 				getBedpostX()
+	# 			elif not os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
+	# 				runBedpostX()
+	# 			else:
+	# 				copyBedpostX()
+	# 		elif not os.path.exists(conmatPipeDir) and os.path.exists(eyeFile):
+	# 			register()
+	# 			runConmat()
+	# 			getFaMat('mean')
+	# 			getMdMat('mean')
+	# 			# removeTempFiles()
+	# 			flag = 1
+	# 		else:
+	# 			flag = 0
+	# 	else:
+	# 		flag = 1
+	if os.path.exists(dtiPipeDir):
+		if os.path.exists(tempSubjDir):
+			flag = 0
+			while flag != 1:
+				if os.path.exists(tempSubjName + '.bedpostX'):
+					if os.path.exists(bedpostXPipeDir):
+						flag = 1
+					elif os.path.exists(eyeFile):
+						copyBedpostX()
+						flag = 1
+					else:
+						flag = 0
+				else:
+					if os.path.exists(bedpostXPipeDir):
+						getBedpostX()
+						flag = 1
+					else:
+						runBedpostX()
+						flag = 0
+			flag = 0
+			while flag != 1:
+				if os.path.exists(conmatPipeDir):
+					flag = 1
+				else:
+					register()
+					runConmat()
+					getFaMat('max')
+					getFaMat('mean')
+					getFaMat('min')
+					getMdMat('max')
+					getMdMat('mean')
+					getMdMat('min')
+					flag = 1
+			# flag = 0
+			#while flag != 1
+				# check if bedpostx file is in temp
+					#if it is, check if the eye file is there
+						# if it is, do nothing, flag = 1
+						# if it's not, flag = 0
+					#if it's not, check if it's in the pipeline
+						#if it is, copy it over to temp, flag = 1
+						# if it's not, run bedpostx, flag = 0
+			#flag = 0
+			#while flag != 1
+				# check if conmat folder exists
+					# if it does, flag = 0
+					# if it doesnt, register and run conmat, flag = 1
+		# if temp does not exist, get files
+		else: 
+			getFiles()
+
+		# 		getFiles()
+		# 		if os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
+		# 			getBedpostX()
+		# 		elif not os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
+		# 			runBedpostX()
+		# 		else:
+		# 			copyBedpostX()
+		# 	elif not os.path.exists(conmatPipeDir) and os.path.exists(eyeFile):
+		# 		register()
+		# 		runConmat()
+		# 		getFaMat('mean')
+		# 		getMdMat('mean')
+		# 		# removeTempFiles()
+		# 		flag = 1
+		# 	else:
+		# 		flag = 0
+		# else:
+		# 	flag = 1
+
 
 #--------------------------------------------------------------------------------
 
 def getFiles():
-	if not os.path.exists(tempSubjDir):
+	os.chdir(dtiPipeDir)
+	if glob.glob('*_eddy_correct.nii.gz') != []:
 		shutil.copytree(dtiPipeDir, tempSubjDir)
 		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
 		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
 		shutil.copy(mniAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
 		shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
-	
+
+		os.chdir(tempSubjDir)
+
+		shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
+		shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
+		shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
+		shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
+	else:
+		return
+
+def getBedpostX():
+	shutil.copytree(bedpostXPipeDir + subjectID + '.bedpostX', tempSubjName + '.bedpostX')
+
+def runBedpostX():
 	os.chdir(tempSubjDir)
 
-	shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
-	shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
-	shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
-	shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
-def runBedpostX():
-	# run bedpostX
 	os.system('bedpostx ./')
 
 def copyBedpostX():
-	# copy the output *.bedpostX to targetPath
-	flag = 0
-	while flag != 1:
-		if os.path.exists(eyeFile):
-			shutil.copytree(tempSubjName + '.bedpostX', bedpostXPipeDir + subjectID + '.bedpostX')
-			flag = 1
+	# flag = 0
+	# while flag != 1:
+	# 	if os.path.exists(eyeFile):
+	shutil.copytree(tempSubjName + '.bedpostX', bedpostXPipeDir + subjectID + '.bedpostX')
+			# flag = 1
 
 def register():
 	os.chdir(tempSubjDir)
@@ -101,8 +180,8 @@ def register():
 
 	os.system('echo "making scheme file"')
 	os.system('fsl2scheme \
-	-bvecfile ' + bvecFile + ' \
-	-bvalfile ' + bvalFile + ' > bVectorScheme.scheme')
+		-bvecfile ' + bvecFile + ' \
+		-bvalfile ' + bvalFile + ' > bVectorScheme.scheme')
 
 	os.system('echo "registering b0-T1"')
 	os.system('flirt \
@@ -144,7 +223,8 @@ def register():
 		-o atlas.nii.gz')
 
 	os.system('echo "fitting tensors"')
-	os.system('wdtfit ' + multiVol + 'bVectorScheme.scheme \
+	os.system('wdtfit ' + multiVol + ' \
+		bVectorScheme.scheme \
 		-brainmask ' + b0Mask + ' \
 		-outputfile wdt.nii.gz')
 
@@ -176,7 +256,7 @@ def runConmat():
 	os.makedirs(conmatPipeDir)
 	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
 	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
-	shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '.nii.gz')
+	shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
 	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
