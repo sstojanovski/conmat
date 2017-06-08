@@ -34,7 +34,7 @@ mniAtlasDir = '/projects/lliu/ImportantFiles/'
 tempSubjDir = '/scratch/lliu/tmp/' + subjectID + '/'
 tempSubjName = '/scratch/lliu/tmp/' + subjectID
 eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
-conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/' 
+conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
 
 def main():
 	# flag = 0
@@ -85,12 +85,12 @@ def main():
 				else:
 					register()
 					runConmat()
-					getFaMat('max')
+					# getFaMat('max')
 					getFaMat('mean')
-					getFaMat('min')
-					getMdMat('max')
+					# getFaMat('min')
+					# getMdMat('max')
 					getMdMat('mean')
-					getMdMat('min')
+					# getMdMat('min')
 					flag = 1
 			# flag = 0
 			#while flag != 1
@@ -107,7 +107,7 @@ def main():
 					# if it does, flag = 0
 					# if it doesnt, register and run conmat, flag = 1
 		# if temp does not exist, get files
-		else: 
+		else:
 			getFiles()
 
 		# 		getFiles()
@@ -168,13 +168,13 @@ def copyBedpostX():
 def register():
 	os.chdir(tempSubjDir)
 
-	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0] 
-	b0Brain = glob.glob('*_b0_bet.nii.gz')[0] 
+	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0]
+	b0Brain = glob.glob('*_b0_bet.nii.gz')[0]
 	multiVol = glob.glob('*_eddy_correct.nii.gz')[0]
-	T1wBrain = 'T1w_brain.nii.gz' 
-	wmParc = 'wmparc.nii.gz' 
-	mniBrain = 'MNI152_T1_2mm_brain.nii.gz' 
-	shenParc = 'shen_2mm_268_parcellation.nii.gz' 
+	T1wBrain = 'T1w_brain.nii.gz'
+	wmParc = 'wmparc.nii.gz'
+	mniBrain = 'MNI152_T1_2mm_brain.nii.gz'
+	shenParc = 'shen_2mm_268_parcellation.nii.gz'
 	bvecFile = '*.bvec'
 	bvalFile = '*.bval'
 
@@ -222,14 +222,15 @@ def register():
 		-init mni.mat \
 		-o atlas.nii.gz')
 
-	os.system('echo "fitting tensors"')
-	os.system('wdtfit ' + multiVol + ' \
-		bVectorScheme.scheme \
-		-brainmask ' + b0Mask + ' \
-		-outputfile wdt.nii.gz')
+	# os.system('echo "fitting tensors"')
+	# os.system('wdtfit ' + multiVol + ' \
+	# 	bVectorScheme.scheme \
+	# 	-brainmask ' + b0Mask + ' \
+	# 	-outputfile wdt.nii.gz')
 
 def runConmat():
 	os.chdir(tempSubjDir)
+	os.makedirs(conmatPipeDir)
 
 	os.system('echo "streamlining"')
 	os.system('track \
@@ -253,23 +254,35 @@ def runConmat():
 		-tractstat length \
 		-outputroot ' + subjectID + '_bedpostX_det_')
 
-	os.makedirs(conmatPipeDir)
 	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
 	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
-	shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
+	# shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
 	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
 
 def getFaMat(stat):
+	# os.chdir(tempSubjDir)
+	# os.system('fa -inputfile wdt.nii.gz -outputfile fa.nii.gz')
+	#
+	# os.system('echo "calculating connectivity matrix"')
+	# os.system('conmat \
+	# 	-inputfile bedDetTracts.Bfloat \
+	# 	-targetfile atlas.nii.gz \
+	# 	-scalarfile fa.nii.gz \
+	# 	-tractstat ' + stat + ' \
+	# 	-outputroot ' + subjectID + '_fa_' + stat + '_')
+	#
+	# shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_fa_' + stat + '.csv')
+
 	os.chdir(tempSubjDir)
-	os.system('fa -inputfile wdt.nii.gz -outputfile fa.nii.gz')
+	faFile = tempSubjDir + glob.glob('*_FA.nii.gz')[0]
 
 	os.system('echo "calculating connectivity matrix"')
 	os.system('conmat \
 		-inputfile bedDetTracts.Bfloat \
 		-targetfile atlas.nii.gz \
-		-scalarfile fa.nii.gz \
+		-scalarfile ' + faFile + ' \
 		-tractstat ' + stat + ' \
 		-outputroot ' + subjectID + '_fa_' + stat + '_')
 
@@ -277,13 +290,13 @@ def getFaMat(stat):
 
 def getMdMat(stat):
 	os.chdir(tempSubjDir)
-	os.system('md -inputfile wdt.nii.gz -outputfile md.nii.gz')
+	mdFile = tempSubjDir + glob.glob('*_MD.nii.gz')[0]
 
 	os.system('echo "calculating connectivity matrix"')
 	os.system('conmat \
 		-inputfile bedDetTracts.Bfloat \
 		-targetfile atlas.nii.gz \
-		-scalarfile md.nii.gz \
+		-scalarfile ' + mdFile + ' \
 		-tractstat ' + stat + ' \
 		-outputroot ' + subjectID + '_md_' + stat + '_')
 
