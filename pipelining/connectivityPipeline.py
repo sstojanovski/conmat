@@ -85,12 +85,12 @@ def main():
 				else:
 					register()
 					runConmat()
-					# getFaMat('max')
+					getFaMat('max')
 					getFaMat('mean')
-					# getFaMat('min')
-					# getMdMat('max')
+					getFaMat('min')
+					getMdMat('max')
 					getMdMat('mean')
-					# getMdMat('min')
+					getMdMat('min')
 					flag = 1
 			# flag = 0
 			#while flag != 1
@@ -254,12 +254,15 @@ def runConmat():
 		-tractstat length \
 		-outputroot ' + subjectID + '_bedpostX_det_')
 
+	conExt = '*_bedpostX_det_sc.csv'
+	lenExt = '*_bedpostX_det_ts.csv'
+
 	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
 	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
 	# shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
 	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
-	shutil.copyfile(tempSubjDir + glob.glob('*_sc.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
-	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
+	shutil.copyfile(tempSubjDir + glob.glob(conExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
+	shutil.copyfile(tempSubjDir + glob.glob(lenExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
 
 def getFaMat(stat):
 	# os.chdir(tempSubjDir)
@@ -286,7 +289,9 @@ def getFaMat(stat):
 		-tractstat ' + stat + ' \
 		-outputroot ' + subjectID + '_fa_' + stat + '_')
 
-	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_fa_' + stat + '.csv')
+	faExt = '*_fa_' + stat + '_ts.csv'
+
+	shutil.copyfile(tempSubjDir + glob.glob(faExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_fa_' + stat + '.csv')
 
 def getMdMat(stat):
 	os.chdir(tempSubjDir)
@@ -300,7 +305,9 @@ def getMdMat(stat):
 		-tractstat ' + stat + ' \
 		-outputroot ' + subjectID + '_md_' + stat + '_')
 
-	shutil.copyfile(tempSubjDir + glob.glob('*_ts.csv')[0], conmatPipeDir + subjectID + '_bedpostX_det_md_' + stat + '.csv')
+	mdExt = '*_md_' + stat + '_ts.csv'
+
+	shutil.copyfile(tempSubjDir + glob.glob(mdExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_md_' + stat + '.csv')
 
 def removeTempFiles():
 	shutil.rmtree(tempSubjDir)
