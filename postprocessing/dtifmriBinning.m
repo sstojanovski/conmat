@@ -1,27 +1,46 @@
 function output = dtifmriBinning(dtiList, fmriList)
+    
+    fmriSubjIDList = {};
+    for i = 1:length(fmriList)
+        fmriSplit = strsplit(char(fmriList(i)), '_');
+        fmriSubjIDList(i) = cellstr(strjoin(fmriSplit(1:4), '_'));
+    end
+        
+    for dtiIndex = 1:length(dtiList)
+        try
+            dtiSplit = strsplit(char(dtiList(dtiIndex)), '_');
+            dtiSubjID = strjoin(dtiSplit(1:4), '_');
 
-    for i = 1:length(dtiList)
-        dti = csvread(char(dtiList(i)), 1, 0);
+            if any(ismember(fmriSubjIDList, dtiSubjID))
+                fmriIndex = find(ismember(fmriSubjIDList, dtiSubjID));
 
-        dti(dti >0) = 1;
-        dti = reshape(dti, 268*268, 1);
+                dti = csvread(char(dtiList(dtiIndex)), 1, 0);
 
-        fmri = csvread(char(fmriList(i)));
-        fmri = reshape(fmri, 268*268, 1);
+%                 dti(dti > 0) = 1;
+                dti = reshape(dti, 268*268, 1);
 
-        minFmri = min(fmri(:));
-        maxFmri = max(fmri(:));
-        minDti = min(dti(:));
-        maxDti = max(dti(:));
+                fmri = csvread(char(fmriList(fmriIndex)));
+                fmri = reshape(fmri, 268*268, 1);
 
-        numBins = 200;
-        step = (maxFmri-minFmri)/numBins;
+                minFmri = min(fmri(:));
+                maxFmri = max(fmri(:));
+        %         minFmri = -1;
+        %         maxFmri = 1;
+                minDti = min(dti(:));
+                maxDti = max(dti(:));
 
-        for i = minFmri:step:maxFmri-step
-            avgDti = mean(dti(fmri >= i & fmri < (i+step)));
-            avgFmri = (i + (i+step))/2;
-            hold on;
-            scatter(avgFmri, avgDti)
+                numBins = 500;
+                step = (maxFmri-minFmri)/numBins;
+
+                for i = minFmri:step:maxFmri-step
+                    avgDti = mean(dti(fmri >= i & fmri < (i+step)));
+                    avgFmri = (i + (i+step))/2;
+                    hold on;
+                    scatter(avgFmri, avgDti, 3, 'k')
+                end
+            end
+        catch 
+            continue;
         end
     end
 end

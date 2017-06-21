@@ -45,7 +45,8 @@ for row in csv_file:
 		extract = glob.glob(row[0] + '*')
 		if extract != []:
 			subjectID = extract[0]
-			if "PHA" not in subjectID and "CMH" in subjectID and "test" not in subjectID:
+			# if "PHA" not in subjectID and "CMH" in subjectID and "test" not in subjectID:
+			if "PHA" not in subjectID and "test" not in subjectID and "9999" not in subjectID:
 				subjConmatDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID +'/'
 				if parameter == 'fmri' and os.path.exists(subjConmatDir):
 					projectPath = '/archive/data-2.0/' + projectName + '/pipelines/fmri/rest/'
