@@ -59,6 +59,7 @@ def main():
 	# 			flag = 0
 	# 	else:
 	# 		flag = 1
+
 	if os.path.exists(dtiPipeDir):
 		if os.path.exists(tempSubjDir):
 			flag = 0
@@ -92,42 +93,8 @@ def main():
 					getMdMat('mean')
 					getMdMat('min')
 					flag = 1
-			# flag = 0
-			#while flag != 1
-				# check if bedpostx file is in temp
-					#if it is, check if the eye file is there
-						# if it is, do nothing, flag = 1
-						# if it's not, flag = 0
-					#if it's not, check if it's in the pipeline
-						#if it is, copy it over to temp, flag = 1
-						# if it's not, run bedpostx, flag = 0
-			#flag = 0
-			#while flag != 1
-				# check if conmat folder exists
-					# if it does, flag = 0
-					# if it doesnt, register and run conmat, flag = 1
-		# if temp does not exist, get files
 		else:
 			getFiles()
-
-		# 		getFiles()
-		# 		if os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
-		# 			getBedpostX()
-		# 		elif not os.path.exists(bedpostXPipeDir) and not os.path.exists(tempSubjName + '.bedpostX'):
-		# 			runBedpostX()
-		# 		else:
-		# 			copyBedpostX()
-		# 	elif not os.path.exists(conmatPipeDir) and os.path.exists(eyeFile):
-		# 		register()
-		# 		runConmat()
-		# 		getFaMat('mean')
-		# 		getMdMat('mean')
-		# 		# removeTempFiles()
-		# 		flag = 1
-		# 	else:
-		# 		flag = 0
-		# else:
-		# 	flag = 1
 
 
 #--------------------------------------------------------------------------------
@@ -230,39 +197,42 @@ def register():
 
 def runConmat():
 	os.chdir(tempSubjDir)
-	os.makedirs(conmatPipeDir)
+	if not os.path.exists(conmatPipeDir):
+		os.makedirs(conmatPipeDir)
+	else:
+		if os.listdir(conmatPipeDir)==[]:
+			register()
+			os.system('echo "streamlining"')
+			os.system('track \
+				-bedpostxdir ' + tempSubjName + '.bedpostX' + ' \
+				-inputmodel bedpostx_dyad \
+				-seedfile wmparc_invert_bin.nii.gz \
+				-curvethresh 90 \
+				-curveinterval 2.5 \
+				-anisthresh 0.2 \
+				-tracker rk4 \
+				-interpolator linear \
+				-iterations 1 \
+				-brainmask nodif_brain_mask.nii.gz | procstreamlines \
+				-endpointfile atlas.nii.gz \
+				-outputfile bedDetTracts.Bfloat')
 
-	os.system('echo "streamlining"')
-	os.system('track \
-		-bedpostxdir ' + tempSubjName + '.bedpostX' + ' \
-		-inputmodel bedpostx_dyad \
-		-seedfile wmparc_invert_bin.nii.gz \
-		-curvethresh 90 \
-		-curveinterval 2.5 \
-		-anisthresh 0.2 \
-		-tracker rk4 \
-		-interpolator linear \
-		-iterations 1 \
-		-brainmask nodif_brain_mask.nii.gz | procstreamlines \
-		-endpointfile atlas.nii.gz \
-		-outputfile bedDetTracts.Bfloat')
+			os.system('echo "calculating connectivity matrix"')
+			os.system('conmat \
+				-inputfile bedDetTracts.Bfloat \
+				-targetfile atlas.nii.gz \
+				-tractstat length \
+				-outputroot ' + subjectID + '_bedpostX_det_')
 
-	os.system('echo "calculating connectivity matrix"')
-	os.system('conmat \
-		-inputfile bedDetTracts.Bfloat \
-		-targetfile atlas.nii.gz \
-		-tractstat length \
-		-outputroot ' + subjectID + '_bedpostX_det_')
+			conExt = '*_bedpostX_det_sc.csv'
+			lenExt = '*_bedpostX_det_ts.csv'
 
-	conExt = '*_bedpostX_det_sc.csv'
-	lenExt = '*_bedpostX_det_ts.csv'
-
-	shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
-	shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
-	# shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
-	shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
-	shutil.copyfile(tempSubjDir + glob.glob(conExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
-	shutil.copyfile(tempSubjDir + glob.glob(lenExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
+			shutil.copyfile(tempSubjDir + glob.glob('bedDetTracts.Bfloat')[0], conmatPipeDir + subjectID + '_detTracts.Bfloat')
+			shutil.copyfile(tempSubjDir + glob.glob('*.scheme')[0], conmatPipeDir + subjectID + '.scheme')
+			# shutil.copyfile(tempSubjDir + glob.glob('wdt.nii.gz')[0], conmatPipeDir + subjectID + '_wdtfit.nii.gz')
+			shutil.copyfile(tempSubjDir + glob.glob('atlas.nii.gz')[0], conmatPipeDir + subjectID + '_registered_shen.nii.gz')
+			shutil.copyfile(tempSubjDir + glob.glob(conExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_connectivity.csv')
+			shutil.copyfile(tempSubjDir + glob.glob(lenExt)[0], conmatPipeDir + subjectID + '_bedpostX_det_length.csv')
 
 def getFaMat(stat):
 	# os.chdir(tempSubjDir)
