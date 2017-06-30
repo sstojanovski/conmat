@@ -5,13 +5,16 @@ function output = dtifmriBinning(dtiList, fmriList)
         fmriSplit = strsplit(char(fmriList(i)), '_');
         fmriSubjIDList(i) = cellstr(strjoin(fmriSplit(1:4), '_'));
     end
-        
+    
+    figure
+
     for dtiIndex = 1:length(dtiList)
         try
             dtiSplit = strsplit(char(dtiList(dtiIndex)), '_');
             dtiSubjID = strjoin(dtiSplit(1:4), '_');
-
+            
             if any(ismember(fmriSubjIDList, dtiSubjID))
+                
                 fmriIndex = find(ismember(fmriSubjIDList, dtiSubjID));
 
                 dti = csvread(char(dtiList(dtiIndex)), 1, 0);
