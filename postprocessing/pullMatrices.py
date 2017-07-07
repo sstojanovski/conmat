@@ -58,10 +58,11 @@ for row in csv_file:
 							shutil.copy(subjConmatDir + subjFile[0], groupedConmatDir)
 							fileNames = fileNames + ' \'' + subjFile[0] + '\''
 				else:
-					# subjConmatDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID +'/'
+					subjConmatDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID +'/'
 					if os.path.exists(subjConmatDir):
 						os.chdir(subjConmatDir)
 						subjFile = glob.glob('*' + parameter + '.csv')
+						print subjFile
 						if subjFile != []:
 							shutil.copy(subjConmatDir + subjFile[0], groupedConmatDir)
 							fileNames = fileNames + ' \'' + subjFile[0] + '\''
