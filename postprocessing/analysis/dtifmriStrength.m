@@ -37,16 +37,16 @@ function output = dtifmriStrength(dtiList, fmriList, minimum, maximum)
                 avgFmri = [];
                 for i = minFmri:step:maxFmri-step
                     avgDti(index) = mean(dti(fmri >= i & fmri < (i+step)));
-%                     avgFmri(index) = (i+step)/2;
-                    avgFmri(index) = abs((i + (i+step))/2);                    
+                    avgFmri(index) = (i + (i+step))/2;                 
                     index = index + 1;
                 end
                 
                 index = 1;
+                dtiStrength = [];
+                fmriStrength = [];
                 for i = 1:length(avgFmri)
-                    if avgFmri(i) >= minimum & avgFmri(i) <= maximum
-%                         fmriStrength(index) = avgFmri(i);
-                        fmriStrength(index) = abs(avgFmri(i));                        
+                    if avgFmri(i) >= minimum & avgFmri(i) <= maximum & avgDti(i) > 0
+                        fmriStrength(index) = avgFmri(i);                     
                         dtiStrength(index) = avgDti(i);
                         index = index + 1;
                     end
@@ -63,10 +63,11 @@ function output = dtifmriStrength(dtiList, fmriList, minimum, maximum)
                 slopeIndex = slopeIndex + 1;
             end
         catch 
+            dtiSubjID
             continue
         end
     end
-    mean(slopes)
+    output = mean(slopes);
     figure
     histogram(dtiStrength, 50)
 end

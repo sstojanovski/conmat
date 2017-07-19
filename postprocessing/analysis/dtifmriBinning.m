@@ -19,7 +19,7 @@ function output = dtifmriBinning(dtiList, fmriList)
 
                 dti = csvread(char(dtiList(dtiIndex)), 1, 0);
 
-                dti(dti > 0) = 1;
+                dti(dti > 0) = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 dti = reshape(dti, 268*268, 1);
 
                 fmri = csvread(char(fmriList(fmriIndex)));
@@ -44,6 +44,7 @@ function output = dtifmriBinning(dtiList, fmriList)
                 scatter(avgFmri, avgDti)
             end
         catch 
+            dtiSubjID
             continue
         end
     end

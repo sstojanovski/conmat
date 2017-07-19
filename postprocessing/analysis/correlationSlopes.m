@@ -1,4 +1,4 @@
-function output = correlationSlopes(dtiList, fmriList)
+function output = correlationSlopes(dtiList, fmriList, parameter_status)
     
     fmriSubjIDList = {};
     for i = 1:length(fmriList)
@@ -9,7 +9,8 @@ function output = correlationSlopes(dtiList, fmriList)
     subjData(1,:) = {'subjectID' 'slope_neg' 'slope_null' 'slope_pos'};
     subjIndex = 2;
     
-    file = fopen('cool.csv', 'w');
+    fileName = strcat(parameter_status, '_correlationSlopes.csv')
+    file = fopen(fileName, 'w');
     fprintf(file, '%s,%s,%s,%s\n', subjData{1,:});
     
     for dtiIndex = 1:length(dtiList)
