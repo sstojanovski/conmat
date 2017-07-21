@@ -57,14 +57,14 @@ def main():
 					done = 1
 				return
 			else:
-				# getFiles()
+				getFiles()
 				os.chdir(tempSubjDir)
 				# brains = glob.glob('*20iso_eddy_correct.nii.gz')
 				brains = glob.glob('*_eddy_correct.nii.gz')
 				if len(brains) > 1:
 					# print subjectID
 					mergeScans()
-				# renameFiles()
+				renameFiles()
 				done = 1
 
 #--------------------------------------------------------------------------------
