@@ -27,45 +27,45 @@ def main():
 		done = 0
 		while done != 1:	
 			if not os.path.exists(tempSubjDir):
-				# flag = 0
-				# while flag != 1:
-				# 	if os.path.exists(tempSubjName + '.bedpostX'):
-				# 		if os.path.exists(bedpostXPipeDir):
-				# 			flag = 1
-				# 		elif os.path.exists(eyeFile):
-				# 			copyBedpostX()
-				# 			flag = 1
-				# 		else:
-				# 			flag = 0
-				# 	else:
-				# 		if os.path.exists(bedpostXPipeDir):
-				# 			getBedpostX()
-				# 			flag = 1
-				# 		else:
-				# 			runBedpostX()
-				# 			flag = 0
-				# flag = 0
-				# while flag != 1:
-				# 	runConmat()
-				# 	getFaMat('max')
-				# 	getFaMat('mean')
-				# 	getFaMat('min')
-				# 	getMdMat('max')
-				# 	getMdMat('mean')
-				# 	getMdMat('min')
-				# 	flag = 1
-				# 	done = 1
+				flag = 0
+				while flag != 1:
+					if os.path.exists(tempSubjName + '.bedpostX'):
+						if os.path.exists(bedpostXPipeDir):
+							flag = 1
+						elif os.path.exists(eyeFile):
+							copyBedpostX()
+							flag = 1
+						else:
+							flag = 0
+					else:
+						if os.path.exists(bedpostXPipeDir):
+							getBedpostX()
+							flag = 1
+						else:
+							runBedpostX()
+							flag = 0
+				flag = 0
+				while flag != 1:
+					runConmat()
+					getFaMat('max')
+					getFaMat('mean')
+					getFaMat('min')
+					getMdMat('max')
+					getMdMat('mean')
+					getMdMat('min')
+					flag = 1
+					done = 1
 				return
 			else:
-				# getFiles()
-				os.chdir(tempSubjDir)
+				getFiles()
+# 				os.chdir(tempSubjDir)
 				# brains = glob.glob('*20iso_eddy_correct.nii.gz')
-				brains = glob.glob('*_eddy_correct.nii.gz')
-				if len(brains) > 1:
-					# print subjectID
-					mergeScans()
-				# renameFiles()
-				done = 1
+# 				brains = glob.glob('*_eddy_correct.nii.gz')
+# 				if len(brains) > 1:
+# 					# print subjectID
+# 					mergeScans()
+# 				renameFiles()
+# 				done = 1
 
 #--------------------------------------------------------------------------------
 

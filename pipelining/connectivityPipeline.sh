@@ -31,7 +31,7 @@ do
 		then
 		# if [ ! -d ${tempSubjDir} ]
 		# 	then
-			# qsub -V -e /scratch/lliu/QLogs/ -o /scratch/lliu/QLogs/ -v projName=${projectName} -v subjID=${subjectID} /scratch/lliu/ConnectivityPipe/runThis.sh
-			python /scratch/lliu/ConnectivityPipe/connectivityPipeline2.py ${projectName} ${subjectID}
+			qsub -V -e /scratch/lliu/QLogs/ -o /scratch/lliu/QLogs/ -v projName=${projectName} -v subjID=${subjectID} /scratch/lliu/ConnectivityPipe/runThis.sh
+			#python /scratch/lliu/ConnectivityPipe/connectivityPipeline2.py ${projectName} ${subjectID}
 	fi
 done
