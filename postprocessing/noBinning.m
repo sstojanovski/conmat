@@ -6,8 +6,6 @@ function output = noBinning(dtiList, fmriList, minimum, maximum)
         fmriSubjIDList(i) = cellstr(strjoin(fmriSplit(1:4), '_'));
     end
     
-    slopeIndex = 1;
-    slopes = [];
     i = 1;
     for dtiIndex = 1:length(dtiList)
         try
@@ -19,7 +17,7 @@ function output = noBinning(dtiList, fmriList, minimum, maximum)
 
                 dti = csvread(char(dtiList(dtiIndex)), 1, 0);
 
-%                 dti(dti > 0) = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                dti(dti > 0) = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 dti = reshape(dti, 268*268, 1);
 
                 fmri = csvread(char(fmriList(fmriIndex)));

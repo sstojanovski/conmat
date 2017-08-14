@@ -39,7 +39,6 @@ function output = dtifmriBinning(dtiList, fmriList)
                     avgFmri(index) = (i + (i+step))/2;
                     index = index + 1;
                     hold on;
-%                     scatter(avgFmri, avgDti, 3, 'k')
                 end
                 scatter(avgFmri, avgDti, 3, 'k')
             end

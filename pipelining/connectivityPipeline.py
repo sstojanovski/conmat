@@ -10,18 +10,24 @@ import sys
 projectName = sys.argv[1]
 subjectID = sys.argv[2]
 
-bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
-conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
+# input directories
 dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
 hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
-
 mniAtlasDir = '/projects/lliu/ImportantFiles/'
+eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
+
+# output directories
+bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
+conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
 tempSubjDir = '/scratch/lliu/tmp/' + subjectID + '/'
 tempSubjName = '/scratch/lliu/tmp/' + subjectID
-eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
-conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
+
 
 def main():
+	# you will possibly/likely have to rerun this code ~3 times.
+	## 1. to run bedpostX,
+	## 2. to run streamline tractography,
+	## 3. to create matrices
 	print(subjectID)
 	if os.path.exists(dtiPipeDir):
 		if os.path.exists(tempSubjDir):
@@ -69,6 +75,7 @@ def getFiles():
 
 		os.chdir(tempSubjDir)
 
+		# renaming necessary files to proper input names
 		shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
 		shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
 		shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
@@ -77,17 +84,23 @@ def getFiles():
 		return
 
 def getBedpostX():
+	# copies bedpostX output files to temp directory, if bedpostX dir already exists
+	## opposite of copyBedpostX
 	shutil.copytree(bedpostXPipeDir + subjectID + '.bedpostX', tempSubjName + '.bedpostX')
 
 def runBedpostX():
+	# runs bedpostX if it does not exist in temp directory or in output directory
 	os.chdir(tempSubjDir)
 
 	os.system('bedpostx ./')
 
 def copyBedpostX():
+	# copies bedpostX output files from temp directory to bedpostX directory
+	## opposite of getBedpostX
 	shutil.copytree(tempSubjName + '.bedpostX', bedpostXPipeDir + subjectID + '.bedpostX')
 
 def register():
+	# registers all necessary brain volumes, scalar files, and masks to the same voxel space
 	os.chdir(tempSubjDir)
 
 	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0]
@@ -213,7 +226,7 @@ def getFaMat(stat):
 				-scalarfile fa.nii.gz \
 				-tractstat ' + stat + ' \
 				-outputroot ' + subjectID + '_fa_' + stat + '_')
-	
+
 	faExt = '*_fa_' + stat + '_ts.csv'
 	shutil.copyfile(tempSubjDir + glob.glob(faExt)[0], faCSV)
 

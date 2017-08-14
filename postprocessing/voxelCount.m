@@ -1,8 +1,11 @@
-% in bash 
+% in bash
 % module load freesurfer
 % module load SPM
+
+% this counts the number of voxels within each ROI of the 268 Shen atlas
+
 function output = voxelCount(dtiList, fmriList)
-    
+
     fmriSubjIDList = {};
     for i = 1:length(fmriList)
         try
