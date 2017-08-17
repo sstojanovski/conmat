@@ -19,12 +19,12 @@ function output = dtifmriBinning(dtiList, fmriList)
 
                 dti = csvread(char(dtiList(dtiIndex)), 1, 0);
 
-                dti(dti > 0) = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 dti(dti > 0) = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 dti = reshape(dti, 268*268, 1);
 
                 fmri = csvread(char(fmriList(fmriIndex)));
                 fmri = reshape(fmri, 268*268, 1);
-
+                
                 minFmri = min(fmri(:));
                 maxFmri = max(fmri(:));
                 minDti = min(dti(:));
@@ -39,9 +39,8 @@ function output = dtifmriBinning(dtiList, fmriList)
                     avgFmri(index) = (i + (i+step))/2;
                     index = index + 1;
                     hold on;
-%                     scatter(avgFmri, avgDti, 3, 'k')
                 end
-                scatter(avgFmri, avgDti)
+                scatter(avgFmri, avgDti, 3, 'k')
             end
         catch 
             dtiSubjID
