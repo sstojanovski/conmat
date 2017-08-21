@@ -36,6 +36,7 @@ function output = connectionWeight(dtiList, lengthList)
      	  csvwrite(fullfile(conmatPath, weightedLengthName), weightedLength, 1, 0);
 
         catch
+            dtiSubjID
             continue
         end
     end

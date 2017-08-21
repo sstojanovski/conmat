@@ -92,11 +92,23 @@ do
 done
 
 #-------------------------------------------------------------------------------
+
+cp -r ${scriptDir}/. ${projectDir}/analysis
+mkdir ${projectDir}/analysis/figures
+mkdir ${projectDir}/analysis/tables
+
 #-------------------------------------------------------------------------------
+
+#matlab getPlots
+#matlab getPValues
+
+#-------------------------------------------------------------------------------
+
+
 #
 # # scatterplot blob
 
-matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getPlots.m'; quit"
+# matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getPlots.m'; quit"
 #
 # # binned analysis
 # dtifmriBinning.m

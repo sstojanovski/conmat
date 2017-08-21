@@ -1,4 +1,4 @@
-function output = getScatterPlot(dtiList, fmriList)
+function output = scatterPlotting(dtiList, fmriList)
 
     fmriSubjIDList = {};
     for i = 1:length(fmriList)
