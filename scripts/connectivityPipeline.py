@@ -24,7 +24,7 @@ tempSubjName = '/scratch/lliu/tmp/' + subjectID
 
 
 def main():
-	# you will possibly/likely have to rerun this code ~3 times.
+	# you will possibly/likely have to re-run this code ~3 times.
 	## 1. to run bedpostX,
 	## 2. to run streamline tractography,
 	## 3. to create matrices

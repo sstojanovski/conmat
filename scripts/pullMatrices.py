@@ -1,12 +1,25 @@
+#!/usr/bin/env python
+
 import os
 import glob
 import shutil
 import csv
+import sys
 
 #this program pulls the connectivity matrices and puts them in a folder, and then makes a text file that has a string of all the file names separated by spaces
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # enter project directory
-projectName = raw_input('Project Name: ')
+projectName = sys.argv[1]
+parameter = sys.argv[2]
+status = sys.argv[3]
+# projectName = raw_input('Project Name: ')
+# parameter = raw_input('Parameter [fmri, connectivity, fa_stat, md_stat, length]: ')
+# status = raw_input('Status [control_arm_1, case_arm_2]: ')
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
 projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
 
 os.chdir(projectPath)
@@ -14,30 +27,11 @@ os.chdir(projectPath)
 projectSubjects = glob.glob('*')
 projectSubjects.sort()
 
-parameter = raw_input('Parameter [fmri, connectivity, fa_stat, md_stat, length]: ')
-status = raw_input('Status [control_arm_1, case_arm_2]: ')
-
 fileNames = ''
 groupedConmatDir = '/scratch/lliu/' + projectName + '/pipelines/grouped/' + parameter + '/'
 demographicsFile = '/archive/data-2.0/SPINS/data/clinical/demographics.csv'
 
-#------------------------------------------------------------------------------------------------
-# for subjectID in projectSubjects:
-# 	if "PHA" not in subjectID and "CMH" in subjectID:
-# 		subjConmatDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID +'/'
-# 		if os.path.exists(subjConmatDir):
-# 			os.chdir(subjConmatDir)
-# 			subjFile = glob.glob('*' + parameter + '.csv')
-# 			if subjFile != []:
-# 				shutil.copy(subjConmatDir + subjFile[0], groupedConmatDir)
-# 				fileNames = fileNames + ' \'' + subjFile[0] + '\''
-
-# os.chdir(groupedConmatDir)
-# file = open(parameter + "_fileNames.txt", "w")
-# file.write(fileNames)
-# file.close()
-
-#------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 csv_file = csv.reader(open(demographicsFile, "rb"), delimiter = ",")
 for row in csv_file:
 	if row[1] == status:

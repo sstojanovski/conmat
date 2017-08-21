@@ -27,5 +27,4 @@ function output = voxelCount(dtiList, fmriList)
             continue
         end
     end
-
 end

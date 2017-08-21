@@ -1,14 +1,21 @@
+#!/usr/bin/env python
+
 import os
 import glob
 import shutil
 import csv
+import sys
 
 #this program pulls the connectivity matrices and puts them in a folder, and then makes a text file that has a string of all the file names separated by spaces
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # enter project directory
-projectName = raw_input('Project Name: ')
+projectName = sys.argv[1]
+# projectName = raw_input('Project Name: ')
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 projectPath = '/archive/data-2.0/' + projectName + '/data/nii/'
-
 os.chdir(projectPath)
 
 projectSubjects = glob.glob('*')
@@ -16,10 +23,10 @@ projectSubjects.sort()
 
 fileNames = ''
 # groupedConmatDir = '/scratch/lliu/' + projectName + '/pipelines/grouped/' + parameter + '/'
-binningDir = '/home/lliu/Desktop/BINNING/'
-demographicsFile = '/archive/data-2.0/SPINS/data/clinical/demographics.csv'
+binningDir = '/scratch/lliu/' + projectName + '/analysis/'
+demographicsFile = '/archive/data-2.0/' + projectName + '/data/clinical/demographics.csv'
 
-#------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 csv_file = csv.reader(open(demographicsFile, "rb"), delimiter = ",")
 for row in csv_file:
 	os.chdir(projectPath)
@@ -34,4 +41,3 @@ for row in csv_file:
 				subjFile = glob.glob('*registered_shen.nii.gz')
 				if subjFile != []:
 					shutil.copy(subjConmatDir + subjFile[0], binningDir)
-
