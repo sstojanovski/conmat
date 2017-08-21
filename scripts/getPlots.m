@@ -32,6 +32,6 @@ close all
 
 %--------------------------------------------------------------------------
 
-// getLinePlotBin(controlList, caseList, fmri_control, fmri_case)
-//
-// getLinePlot(controlList, caseList, fmri_control, fmri_case)
+%// getLinePlotBin(controlList, caseList, fmri_control, fmri_case)
+%//
+%// getLinePlot(controlList, caseList, fmri_control, fmri_case)

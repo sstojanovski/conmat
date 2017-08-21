@@ -28,7 +28,7 @@ do
 done
 
 #-------------------------------------------------------------------------------
-rm -rf ${projectDir}/analysis
+rm -r ${projectDir}/analysis
 
 mkdir ${projectDir}/analysis
 

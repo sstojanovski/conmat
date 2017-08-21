@@ -1,4 +1,4 @@
-function output = noBinning(dtiList, fmriList, minimum, maximum)
+function output = correlationSloping(dtiList, fmriList, min, max)
 
     fmriSubjIDList = {};
     for i = 1:length(fmriList)
@@ -6,13 +6,15 @@ function output = noBinning(dtiList, fmriList, minimum, maximum)
         fmriSubjIDList(i) = cellstr(strjoin(fmriSplit(1:4), '_'));
     end
 
-    i = 1;
+    figure
+
     for dtiIndex = 1:length(dtiList)
         try
             dtiSplit = strsplit(char(dtiList(dtiIndex)), '_');
             dtiSubjID = strjoin(dtiSplit(1:4), '_');
 
-            if any(ismember(fmriSubjIDList, dtiSubjID));
+            if any(ismember(fmriSubjIDList, dtiSubjID))
+
                 fmriIndex = find(ismember(fmriSubjIDList, dtiSubjID));
 
                 dti = csvread(char(dtiList(dtiIndex)), 1, 0);
@@ -21,14 +23,17 @@ function output = noBinning(dtiList, fmriList, minimum, maximum)
                 fmri = csvread(char(fmriList(fmriIndex)));
                 fmri = reshape(fmri, 268*268, 1);
 
-                X = dti(fmri(:) > minimum & fmri(:) < maximum);
-                dtiValues{:,i} = X;
-                i = i + 1;
+                fmriData = fmri(fmri(:) > minimum & fmri(:) < maximum)
+                dtiData = dti(fmri(:) > minimum & fmri(:) < maximum)
+
+                scatter(fmriData, dtiData, 3, 'k')
             end
         catch
             dtiSubjID
             continue
         end
     end
-    output = cell2mat(reshape(dtiValues, [], 1));
+    M = lsline;
+    slopeIntercept = polyfit(get(M, 'xdata'), get(M, 'ydata'), 1);
+    output = slopeIntercept(1, 1);
 end
