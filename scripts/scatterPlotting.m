@@ -7,6 +7,7 @@ function output = scatterPlotting(dtiList, fmriList)
     end
 
     figure
+    hold on
 
     for dtiIndex = 1:length(dtiList)
         try

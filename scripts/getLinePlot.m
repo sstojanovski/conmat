@@ -1,4 +1,5 @@
 function output = getLinePlot(controlList, caseList, fmri_control, fmri_case)
+    index = 1;
     for min = -1.0:0.1:0.9
         controlData = noBinning(controlList, fmri_control, min, min+0.1);
         caseData = noBinning(caseList, fmri_case, min, min+0.1);

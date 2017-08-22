@@ -15,7 +15,7 @@ function output = doFisherTest(controlList, caseList, fmri_control, fmri_case)
 
         [~, p, stats] = fishertest([controlPres(1,index) controlAbs(1,index); casePres(1,index) caseAbs(1,index)])
         pVals(1,index) = p;
-        oddsRs(1,index) = struct.OddsRatio;
+        oddsRs(1,index) = stats.OddsRatio;
 
         index = index + 1;
     end

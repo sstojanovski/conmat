@@ -7,6 +7,7 @@ function output = dtifmriBinning(dtiList, fmriList)
     end
 
     figure
+    hold on
 
     for dtiIndex = 1:length(dtiList)
         try
