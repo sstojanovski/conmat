@@ -6,4 +6,4 @@ csvwrite('/scratch/lliu/SPINS/analysis/tables/compare_length_weighted.csv', doTT
 csvwrite('/scratch/lliu/SPINS/analysis/tables/compare_connectivity_weighted.csv', doTTest(connectivity_weighted_control_arm_1, connectivity_weighted_case_arm_2, fmri_control_arm_1, fmri_case_arm_2))
 csvwrite('/scratch/lliu/SPINS/analysis/tables/compare_presence.csv', doFisherTest(connectivity_control_arm_1, connectivity_case_arm_2, fmri_control_arm_1, fmri_case_arm_2))
 
-%// doZTest(controlList, caseList, fmri_control, fmri_case)
+doZTest

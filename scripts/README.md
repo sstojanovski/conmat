@@ -20,7 +20,7 @@ Connectivity Matrices
 - tracking algorithms
 - rk4 vs. euler
 
-- interpolation algorithms 
+- interpolation algorithms
 - linear vs tend vs nn
 
 Parameters determined from: Reproducibility of graph metrics of human brain structural networks
@@ -38,7 +38,7 @@ fa
 - estimatesnr
 - dtlutgen
 - picopdfs
-- track 
+- track
 
 
 ## Connectivity Matrix
@@ -46,4 +46,4 @@ fa
 
 ## Visualisation Tools
 - vtkstreamlines
-- pdview 
+- pdview

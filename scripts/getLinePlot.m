@@ -1,4 +1,5 @@
 function output = getLinePlot(controlList, caseList, fmri_control, fmri_case)
+    xCoords(1,:) = [-0.95:0.1:0.95];
     index = 1;
     for min = -1.0:0.1:0.9
         controlData = noBinning(controlList, fmri_control, min, min+0.1);
@@ -15,7 +16,7 @@ function output = getLinePlot(controlList, caseList, fmri_control, fmri_case)
 
     figure
     hold on
-    errorbar(matrix(1,:), controlY(1,:), controlErr(1,:), 'b')
-    errorbar(matrix(1,:), caseY(1,:), caseErr(1,:), 'r')
+    errorbar(xCoords(1,:), controlY(1,:), controlErr(1,:), 'b')
+    errorbar(xCoords(1,:), caseY(1,:), caseErr(1,:), 'r')
 
 end

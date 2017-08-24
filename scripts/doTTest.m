@@ -4,7 +4,7 @@ function output = doTTest(controlList, caseList, fmri_control, fmri_case)
     pVals = [];
     tVals = [];
     dofs = [];
-    
+
     for min = -1.0:0.1:0.9
         controlData = noBinning(controlList, fmri_control, min, min+0.1);
         caseData = noBinning(caseList, fmri_case, min, min+0.1);

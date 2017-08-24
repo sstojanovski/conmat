@@ -1,0 +1,3 @@
+getPlots
+getTables
+getFigs

@@ -98,34 +98,9 @@ mkdir ${projectDir}/analysis/figures
 mkdir ${projectDir}/analysis/tables
 
 #-------------------------------------------------------------------------------
-
-#matlab getPlots
-#matlab getPValues
+matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getPlots.m'; quit"
+matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getTables.m'; quit"
+cp -r /scratch/lliu/${projectName}/analysis/figures/. /scratch/lliu/${projectName}/analysis
+matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getFigs.m'; quit"
 
 #-------------------------------------------------------------------------------
-
-
-#
-# # scatterplot blob
-
-# matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getPlots.m'; quit"
-#
-# # binned analysis
-# dtifmriBinning.m
-#
-# matlab -nodisplay -nosplash -r "addpath(genpath('DEPENDENCIES/PATH')); getBinnedAnalyses.m; quit"
-#
-# - for presence of connection
-# - for other metrics
-#
-# # getPValues
-#
-# matlab -nodisplay -nosplash -r "addpath(genpath('DEPENDENCIES/PATH')); getBinnedAnalyses.m; quit"
-#
-# # getLinePlot
-# matlab -nodisplay -nosplash -r "addpath(genpath('DEPENDENCIES/PATH')); getBinnedAnalyses.m; quit"
-#
-# # z-score analysis
-# zScoring.m
-#
-# matlab -nodisplay -nosplash -r "addpath(genpath('DEPENDENCIES/PATH')); getBinnedAnalyses.m; quit"

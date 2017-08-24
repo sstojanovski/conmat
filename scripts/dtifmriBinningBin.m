@@ -34,6 +34,7 @@ function output = dtifmriBinningBin(dtiList, fmriList)
                 step = (maxFmri-minFmri)/numBins;
 
                 index = 1;
+
                 for i = minFmri:step:maxFmri-step
                     avgDti(index) = mean(dti(fmri >= i & fmri < (i+step)));
                     avgFmri(index) = (i + (i+step))/2;

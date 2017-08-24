@@ -23,7 +23,7 @@ function output = correlationSloping(dtiList, fmriList, min, max)
 
                 fmri = csvread(char(fmriList(fmriIndex)));
                 fmriData(:, index) = reshape(fmri, 268*268, 1);
-                
+
                 index = index + 1;
             end
         catch
@@ -33,9 +33,9 @@ function output = correlationSloping(dtiList, fmriList, min, max)
     end
     fmri = fmriData(fmriData > min & fmriData < max);
     dti = dtiData(fmriData > min & fmriData < max);
-    
+
     scatter(fmri, dti, 3, 'k');
-    
+
     M = lsline;
     slopeIntercept = polyfit(get(M, 'xdata'), get(M, 'ydata'), 1);
     output = slopeIntercept(1, 1);
