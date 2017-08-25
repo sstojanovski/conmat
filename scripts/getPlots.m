@@ -184,7 +184,7 @@ ylabel('Volume-Weighted Streamline Density')
 saveas(gcf, '/scratch/lliu/SPINS/analysis/figures/binning_case_volume_weighted.fig')
 close all
 
---------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 getLinePlotBin(connectivity_control_arm_1, connectivity_case_arm_2, fmri_control_arm_1, fmri_case_arm_2)
 title('CONTROL vs. CASE: Connection Presence vs. fMRI Correlation')

@@ -31,6 +31,6 @@ do
 	if [[ ! ${subjectID} == *PHA* ]]
 		then
 			qsub -V -e /scratch/lliu/QLogs/ -o /scratch/lliu/QLogs/ -v projName=${projectName} -v subjID=${subjectID} /scratch/lliu/ConnectivityPipe/runThis.sh
-			#python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
+			# python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
 	fi
 done

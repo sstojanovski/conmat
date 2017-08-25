@@ -1,4 +1,3 @@
-
 #!/bin/bash -e
 
 . $MODULESHOME/init/bash
@@ -8,7 +7,7 @@ module load freesurfer
 module load SPM
 
 scriptDir=/projects/lliu/conmat/scripts/
-cd scriptDir
+cd ${scriptDir}
 
 # enter project directory
 projectName=SPINS
@@ -57,7 +56,7 @@ do
 	done
 done
 
-#-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 # * write script that runs voxelCount.m and connectionWeight.m
 # voxelCount(dtiList, fmriList) #the streamline list
@@ -98,6 +97,7 @@ mkdir ${projectDir}/analysis/figures
 mkdir ${projectDir}/analysis/tables
 
 #-------------------------------------------------------------------------------
+
 matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getPlots.m'; quit"
 matlab -nodisplay -nosplash -r "addpath(genpath('/projects/lliu/conmat/scripts')); '/projects/lliu/conmat/scripts/getTables.m'; quit"
 cp -r /scratch/lliu/${projectName}/analysis/figures/. /scratch/lliu/${projectName}/analysis
