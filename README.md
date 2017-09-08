@@ -1,49 +1,42 @@
-# conmat
-Connectivity Matrices
+# connectivityPipeline.sh
 
-+ Camino
-+ FSL
-+ Matlab
-+ Paraview
+## runThis.sh
+### connectivityPipeline.py
 
-## Pre-Processing
-- fsl2scheme
-- flirt
-- convert_xfm
-- fslmaths
+-----
 
-## Deterministic Tractography
-+ RK4
-+ track
-- input models
-- dt, diffusion tensor data produced by modelfit
-- tracking algorithms
-- rk4 vs. euler
+# fullPipeline.sh
 
-- interpolation algorithms 
-- linear vs tend vs nn
+## pullMatrices.py
+## pullAtlases.py
+## weighting.m
 
-Parameters determined from: Reproducibility of graph metrics of human brain structural networks
-
-wdtfit - wrapper to modelfit
-track
-fa
+### voxelCount.m
+### connectionWeight.m
 
 
-## Probabilistic Tractography
-+ probability look-up table
-+ PICo
+## analyze.m
 
-- modelfit
-- estimatesnr
-- dtlutgen
-- picopdfs
-- track 
+### getPlots.m
+#### scatterPlotting.m
+#### dtifmriBinningBin.m
+#### dtifmriBinning.m
+#### getLinePlotBin.m
+#### getLinePlot.m
 
+### getFigs.m
+#### combineFigs.m
 
-## Connectivity Matrix
-- conmat
+### getTables.m
+#### getPValues.m
+##### doFisherTest.m *
+##### doTTest.m *
+##### doZTest.m
+###### zScoring.m
+#### getSlopes.m
+##### correlationSloping.m
 
-## Visualisation Tools
-- vtkstreamlines
-- pdview 
+###### noBinning.m *
+###### procFile.m
+###### sparsity.m
+###### listOfLists.m
