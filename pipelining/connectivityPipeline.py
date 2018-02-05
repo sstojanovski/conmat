@@ -6,21 +6,28 @@ import shutil
 import sys
 
 #--------------------------------------------------------------------------------
+#need to add some kind useage + if shenAtlasDir DNE the option to grab the shen atlas from somewhere else
 
 projectName = sys.argv[1]
 subjectID = sys.argv[2]
-
+#TEST
 # input directories
 dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
-hcpPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/hcp/' + subjectID + '/T1w/'
-mniAtlasDir = '/projects/lliu/ImportantFiles/'
+hcpPipeDir = '/external/PNC/data//hcp/PNC_' + subjectID + '_SESS01/T1w/'
+## these are hcp-ed preprocessed t1s fpor each person
+
+mniAtlasDir = '/opt/quarantine/FSL/5.0.10/build/data/standard/'
+shenAtlasDir = '/archive/code/datman/assets/'
+
 eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 
 # output directories
-bedpostXPipeDir = '/scratch/lliu/' + projectName + '/pipelines/bedpostX/' + subjectID + '/'
-conmatPipeDir = '/scratch/lliu/' + projectName + '/pipelines/conmat/' + subjectID + '/'
-tempSubjDir = '/scratch/lliu/tmp/' + subjectID + '/'
-tempSubjName = '/scratch/lliu/tmp/' + subjectID
+bedpostXPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostX/' + subjectID + '/'
+conmatPipeDir = '/projects/sstojanovski/' + projectName + '/conmat/' + subjectID + '/'
+tempSubjDir = '/projects/sstojanovski/' + projectName + 'tmp' + subjectID + '/'
+#this is where bedpostx is running from
+tempSubjName = '/projects/sstojanovski/' + projectName + 'tmp' + subjectID
+## ok you really should name the organized input tmp instead of bedpostx. So edit connectivityPipeline.sh to reflect this
 
 
 def main():
@@ -70,7 +77,7 @@ def getFiles():
 		shutil.copytree(dtiPipeDir, tempSubjDir)
 		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
 		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
-		shutil.copy(mniAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
+		shutil.copy(shenAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
 		shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
 
 		os.chdir(tempSubjDir)

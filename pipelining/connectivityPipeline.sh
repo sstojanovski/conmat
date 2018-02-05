@@ -23,14 +23,15 @@ if [ ! -d "${projectDir}" ]
 	mkdir bedpostX
 	mkdir conmat
 	mkdir Qlogs
+	mkdir tmp
 fi
 
 cd ${projectPath}
 
 for subjectID in *
 do
-	tempSubjDir=/scratch/lliu/tmp/${subjectID}/
-		qsub -V -e {$projectDir}/QLogs/ -o {$projectDir}/QLogs/ -v projName=${projectName} -v subjID=${subjectID} {$projectDir}/conmat/pipelining/runThis.sh
+	tempSubjDir={$projectDir}/tmp/${subjectID}/
+		qsub -V -e {$projectDir}/QLogs/ -o {$projectDir}/QLogs/ -v projName=${projectName} -v subjID=${subjectID} {$projectDir}/scripts/pipelining/runThis.sh
 		# python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
 	fi
 done
