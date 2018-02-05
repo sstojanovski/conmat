@@ -6,4 +6,4 @@ module load python
 projectName=${projName}
 subjectID=${subjID}
 
-python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
+python /projects/sstojanovski/conmat/pipelining/connectivityPipeline.py ${projectName} ${subjectID}

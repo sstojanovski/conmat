@@ -30,7 +30,7 @@ cd ${projectPath}
 for subjectID in *
 do
 	tempSubjDir=/scratch/lliu/tmp/${subjectID}/
-		qsub -V -e {$projectDir}/QLogs/ -o {$projectDir}/QLogs/ -v projName=${projectName} -v subjID=${subjectID} {$projectDir}/scripts/runThis.sh
+		qsub -V -e {$projectDir}/QLogs/ -o {$projectDir}/QLogs/ -v projName=${projectName} -v subjID=${subjectID} {$projectDir}/conmat/pipelining/runThis.sh
 		# python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
 	fi
 done
