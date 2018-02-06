@@ -10,13 +10,12 @@ import sys
 
 projectName = sys.argv[1]
 subjectID = sys.argv[2]
-#TEST
 # input directories
-dtiPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID + '/'
+dtiPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/data/' + subjectID + '/'
 ## this wanted to bring in the dtifit data from external/archive that was NOT renamed
 ## I already did the step where data is moved from here to the tempSubjDir so i'm just going to rename tempSubjDir
-hcpPipeDir = '/external/PNC/data//hcp/PNC_' + subjectID + '_SESS01/T1w/'
-## these are hcp-ed preprocessed t1s fpor each person
+hcpPipeDir = '/external/PNC/data/hcp/PNC_' + subjectID + '_SESS01/T1w/' ## these are hcp-ed preprocessed t1s fpor each person
+hcpSubjDir= hcpPipeDir + 'T1w_brain.nii.gz' ## for the purposes of checking if all the inputs are here:
 
 mniAtlasDir = '/opt/quarantine/FSL/5.0.10/build/data/standard/'
 shenAtlasDir = '/archive/code/datman/assets/'
@@ -26,10 +25,10 @@ eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 # output directories
 bedpostXPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostX/' + subjectID + '/'
 conmatPipeDir = '/projects/sstojanovski/' + projectName + '/conmat/' + subjectID + '/'
-tempSubjDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID + '/'
+tempSubjDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/data/' + subjectID + '/'
 #this is where bedpostx is running from
 tempSubjName = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID
-## ok you really should name the organized input tmp instead of bedpostx. So edit connectivityPipeline.sh to reflect this
+
 
 
 def main():
@@ -37,9 +36,12 @@ def main():
 	## 1. to run bedpostX,
 	## 2. to run streamline tractography,
 	## 3. to create matrices
+
+	## This has been modified to run for the PNC where the input dti data was a disaster & already had to be moved, but other inputs have not
 	print(subjectID)
 	if os.path.exists(dtiPipeDir):
-		if os.path.exists(tempSubjDir):
+		if os.path.exists(hcpSubjDir):
+		## this used to be if the tempSubjDir exists, but you know it has to bc you already had to move data so change it to what hasn't been moved: the hcp T1s (hcpSubjDir)!
 			flag = 0
 			while flag != 1:
 				if os.path.exists(tempSubjName + '.bedpostX'):
@@ -60,7 +62,6 @@ def main():
 						flag = 0
 			flag = 0
 			while flag != 1:
-				## U R HERE
 				runConmat()
 				getFaMat('max')
 				getFaMat('mean')
@@ -78,7 +79,7 @@ def main():
 def getFiles():
 	os.chdir(dtiPipeDir)
 	if glob.glob('*_eddy_correct.nii.gz') != []:
-		shutil.copytree(dtiPipeDir, tempSubjDir)
+		#shutil.copytree(dtiPipeDir, tempSubjDir) ## I realize this looks crazy.  The function of seeing if you don't have an eddy correct image is to move in the DTI data, but I already did that & not the other things
 		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
 		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
 		shutil.copy(shenAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
@@ -86,8 +87,7 @@ def getFiles():
 
 		os.chdir(tempSubjDir)
 
-		# renaming necessary files to proper input names
-		## I already did this when I moved data from multiple places
+		# renaming necessary files to proper input names ## I already did this when I moved data from multiple places
 		# shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
 		# shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
 		# shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
