@@ -12,7 +12,9 @@ projectName = sys.argv[1]
 subjectID = sys.argv[2]
 #TEST
 # input directories
-dtiPipeDir = '/archive/data-2.0/' + projectName + '/pipelines/dtifit/' + subjectID + '/'
+dtiPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID + '/'
+## this wanted to bring in the dtifit data from external/archive that was NOT renamed
+## I already did the step where data is moved from here to the tempSubjDir so i'm just going to rename tempSubjDir
 hcpPipeDir = '/external/PNC/data//hcp/PNC_' + subjectID + '_SESS01/T1w/'
 ## these are hcp-ed preprocessed t1s fpor each person
 
@@ -24,9 +26,9 @@ eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 # output directories
 bedpostXPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostX/' + subjectID + '/'
 conmatPipeDir = '/projects/sstojanovski/' + projectName + '/conmat/' + subjectID + '/'
-tempSubjDir = '/projects/sstojanovski/' + projectName + 'tmp' + subjectID + '/'
+tempSubjDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID + '/'
 #this is where bedpostx is running from
-tempSubjName = '/projects/sstojanovski/' + projectName + 'tmp' + subjectID
+tempSubjName = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID
 ## ok you really should name the organized input tmp instead of bedpostx. So edit connectivityPipeline.sh to reflect this
 
 
@@ -45,6 +47,7 @@ def main():
 						flag = 1
 					elif os.path.exists(eyeFile):
 						copyBedpostX()
+						## copying completed bedpostX from bedpostXPipeDir to bedpostXdata
 						flag = 1
 					else:
 						flag = 0
@@ -57,6 +60,7 @@ def main():
 						flag = 0
 			flag = 0
 			while flag != 1:
+				## U R HERE
 				runConmat()
 				getFaMat('max')
 				getFaMat('mean')
@@ -83,10 +87,11 @@ def getFiles():
 		os.chdir(tempSubjDir)
 
 		# renaming necessary files to proper input names
-		shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
-		shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
-		shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
-		shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
+		## I already did this when I moved data from multiple places
+		# shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
+		# shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
+		# shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
+		# shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
 	else:
 		return
 
