@@ -12,7 +12,7 @@ module load AFNI
 projectName=PNC_dti_conn
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-projectPath=/projects/sstojanovski/${projectName}/bedpostX/data/
+projectPath=/projects/sstojanovski/${projectName}/bedpostXdata/data/
 projectDir=/projects/sstojanovski/${projectName}/
 
 if [ ! -d "${projectDir}" ]
@@ -30,7 +30,8 @@ cd ${projectPath}
 
 for subjectID in *
 do
-	tempSubjDir={$projectDir}/tmp/${subjectID}/
+	# tempSubjDir={$projectDir}/tmp/${subjectID}/
+	# don't think this has any utility??
 		qsub -V -e {$projectDir}/QLogs/ -o {$projectDir}/QLogs/ -v projName=${projectName} -v subjID=${subjectID} {$projectDir}/scripts/pipelining/runThis.sh
 		# python /scratch/lliu/ConnectivityPipe/connectivityPipeline.py ${projectName} ${subjectID}
 	fi
