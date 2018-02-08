@@ -20,14 +20,14 @@ hcpSubjDir= hcpPipeDir + 'T1w_brain.nii.gz' ## for the purposes of checking if a
 mniAtlasDir = '/opt/quarantine/FSL/5.0.10/build/data/standard/'
 shenAtlasDir = '/archive/code/datman/assets/'
 
-eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 
 # output directories
 bedpostXPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostX/' + subjectID + '/'
 conmatPipeDir = '/projects/sstojanovski/' + projectName + '/conmat/' + subjectID + '/'
 tempSubjDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/data/' + subjectID + '/'
 #this is where bedpostx is running from
-tempSubjName = '/projects/sstojanovski/' + projectName + '/bedpostXdata/' + subjectID
+tempSubjName = '/projects/sstojanovski/' + projectName + '/bedpostXdata/data/' + subjectID
+eyeFile = tempSubjName + '.bedpostX/xfms/eye.mat'
 
 
 
