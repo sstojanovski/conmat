@@ -15,7 +15,7 @@ dtiPipeDir = '/projects/sstojanovski/' + projectName + '/bedpostXdata/data/' + s
 ## this wanted to bring in the dtifit data from external/archive that was NOT renamed
 ## I already did the step where data is moved from here to the tempSubjDir so i'm just going to rename tempSubjDir
 hcpPipeDir = '/external/PNC/data/hcp/PNC_' + subjectID + '_SESS01/T1w/' ## these are hcp-ed preprocessed t1s fpor each person
-hcpSubjDir= hcpPipeDir + 'T1w_brain.nii.gz' ## for the purposes of checking if all the inputs are here:
+hcpSubjDir= dtiPipeDir + 'T1w_brain.nii.gz' ## for the purposes of checking if all the inputs are here:
 
 mniAtlasDir = '/opt/quarantine/FSL/5.0.10/build/data/standard/'
 shenAtlasDir = '/archive/code/datman/assets/'
@@ -78,22 +78,19 @@ def main():
 
 def getFiles():
 	os.chdir(dtiPipeDir)
-	if glob.glob('*_eddy_correct.nii.gz') != []:
-		#shutil.copytree(dtiPipeDir, tempSubjDir) ## I realize this looks crazy.  The function of seeing if you don't have an eddy correct image is to move in the DTI data, but I already did that & not the other things
-		shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
-		shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
-		shutil.copy(shenAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
-		shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
+	#shutil.copytree(dtiPipeDir, tempSubjDir) ## I realize this looks crazy.  The function of seeing if you don't have an eddy correct image is to move in the DTI data, but I already did that & not the other things
+	shutil.copy(hcpPipeDir + 'wmparc.nii.gz', tempSubjDir)
+	shutil.copy(hcpPipeDir + 'T1w_brain.nii.gz', tempSubjDir)
+	shutil.copy(shenAtlasDir + 'shen_2mm_268_parcellation.nii.gz', tempSubjDir)
+	shutil.copy(mniAtlasDir + 'MNI152_T1_2mm_brain.nii.gz', tempSubjDir)
 
-		os.chdir(tempSubjDir)
-
-		# renaming necessary files to proper input names ## I already did this when I moved data from multiple places
+		# os.chdir(tempSubjDir) ## I already did this when I moved data from multiple places
+		# renaming necessary files to proper input names
 		# shutil.copyfile(tempSubjDir + glob.glob('*.bval')[0], tempSubjDir + 'bvals')
 		# shutil.copyfile(tempSubjDir + glob.glob('*.bvec')[0], tempSubjDir + 'bvecs')
 		# shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct_b0_bet_mask.nii.gz')[0], tempSubjDir + 'nodif_brain_mask.nii.gz')
 		# shutil.copyfile(tempSubjDir + glob.glob('*_eddy_correct.nii.gz')[0], tempSubjDir + 'data.nii.gz')
-	else:
-		return
+
 
 def getBedpostX():
 	# copies bedpostX output files to temp directory, if bedpostX dir already exists
@@ -115,15 +112,16 @@ def register():
 	# registers all necessary brain volumes, scalar files, and masks to the same voxel space
 	os.chdir(tempSubjDir)
 
-	b0Mask = glob.glob('*_b0_bet_mask.nii.gz')[0]
+	## this script assumes you have already moved your bet mask and eddy corrected data to a directory and renamed them
+	b0Mask = 'nodif_bran_mask.nii.gz'
 	b0Brain = glob.glob('*_b0_bet.nii.gz')[0]
-	multiVol = glob.glob('*_eddy_correct.nii.gz')[0]
+	multiVol = 'data.nii.gz'
 	T1wBrain = 'T1w_brain.nii.gz'
 	wmParc = 'wmparc.nii.gz'
 	mniBrain = 'MNI152_T1_2mm_brain.nii.gz'
 	shenParc = 'shen_2mm_268_parcellation.nii.gz'
-	bvecFile = '*.bvec'
-	bvalFile = '*.bval'
+	bvecFile = 'bvecs'
+	bvalFile = 'bvals'
 
 	os.system('echo "making scheme file"')
 	os.system('fsl2scheme \
